@@ -57,7 +57,14 @@ class DemoEventTicket {
   // [END auth]
 
   // [START createClass]
-
+  /**
+   * Create a class.
+   *
+   * @param {string} issuerId The issuer ID being used for this request.
+   * @param {string} classSuffix Developer-defined unique ID for this pass class.
+   *
+   * @returns {string} The pass class ID: `${issuerId}.${classSuffix}`
+   */
   async createClass(issuerId, classSuffix) {
     let response;
 
@@ -86,11 +93,11 @@ class DemoEventTicket {
       eventName: {
         defaultValue: {
           language: "en-US",
-          value: "Inauguration ceremony",
+          value: "Event name",
         },
       },
       id: `${issuerId}.${classSuffix}`,
-      issuerName: "Carnation InfoTech",
+      issuerName: "Issuer name",
       reviewStatus: "UNDER_REVIEW",
     };
 
@@ -134,17 +141,12 @@ class DemoEventTicket {
 
     // Update the class by adding a homepage
     updatedClass["homepageUri"] = {
-      uri: "https://github.com/google-pay/wallet-samples/blob/main/nodejs/demo-eventticket.js",
-      description: "Google Github",
+      uri: "https://developers.google.com/wallet",
+      description: "Homepage description",
     };
 
     // Note: reviewStatus must be 'UNDER_REVIEW' or 'DRAFT' for updates
-    updatedClass["eventName"]["defaultValue"] = {
-      language: "en-US",
-      value: "Party Function2",
-    };
     updatedClass["reviewStatus"] = "UNDER_REVIEW";
-    updatedClass["issuerName"] = "Carnation InfoTech 2";
 
     response = await this.httpClient.request({
       url: `${this.classUrl}/${issuerId}.${classSuffix}`,
@@ -193,12 +195,8 @@ class DemoEventTicket {
     // Patch the class by adding a homepage
     let patchBody = {
       homepageUri: {
-        uri: "https://www.carnationinfotech.com/index.html",
-        description: "Homepage description",
-      },
-      homepageUri2: {
         uri: "https://developers.google.com/wallet",
-        description: "Homepage description2",
+        description: "Homepage description",
       },
 
       // Note: reviewStatus must be 'UNDER_REVIEW' or 'DRAFT' for updates
@@ -306,7 +304,7 @@ class DemoEventTicket {
       state: "ACTIVE",
       heroImage: {
         sourceUri: {
-          uri: "https://www.carnationinfotech.com/assets/img/logo.png",
+          uri: "https://farm4.staticflickr.com/3723/11177041115_6e6a3b6f49_o.jpg",
         },
         contentDescription: {
           defaultValue: {
@@ -317,40 +315,30 @@ class DemoEventTicket {
       },
       textModulesData: [
         {
-          header: "Welcome Message",
-          body: "Welcome to carnation InfoTech",
-          id: "01",
+          header: "Text module header",
+          body: "Text module body",
+          id: "TEXT_MODULE_ID",
         },
-        // {
-        //   header: "Text module header 2",
-        //   body: "Welcome to carnation Company InfoTech pvt Ltd",
-        //   id: "04",
-        // },
       ],
       linksModuleData: {
         uris: [
           {
-            uri: "https://www.carnationinfotech.com/life-at-carnation.html",
-            description: "Life At Carnation InfoTech",
-            id: "02",
+            uri: "http://maps.google.com/",
+            description: "Link module URI description",
+            id: "LINK_MODULE_URI_ID",
           },
           {
-            uri: "tel:6206416452",
-            description: "Contact Number",
-            id: "03",
+            uri: "tel:6505555555",
+            description: "Link module tel description",
+            id: "LINK_MODULE_TEL_ID",
           },
-          // {
-          //   uri: "tel:7050725092",
-          //   description: "Contact Number of Friend",
-          //   id: "05",
-          // },
         ],
       },
       imageModulesData: [
         {
           mainImage: {
             sourceUri: {
-              uri: "https://www.carnationinfotech.com/assets/img/logo.png",
+              uri: "http://farm4.staticflickr.com/3738/12440799783_3dc3c20606_b.jpg",
             },
             contentDescription: {
               defaultValue: {
@@ -376,30 +364,30 @@ class DemoEventTicket {
         seat: {
           defaultValue: {
             language: "en-US",
-            value: "4200",
+            value: "42",
           },
         },
         row: {
           defaultValue: {
             language: "en-US",
-            value: "G4",
+            value: "G3",
           },
         },
         section: {
           defaultValue: {
             language: "en-US",
-            value: "6",
+            value: "5",
           },
         },
         gate: {
           defaultValue: {
             language: "en-US",
-            value: "B",
+            value: "A",
           },
         },
       },
-      ticketHolderName: "Ashish Ranjan",
-      ticketNumber: "20220022",
+      ticketHolderName: "Ticket holder name",
+      ticketNumber: "Ticket number",
     };
 
     response = await this.httpClient.request({
@@ -445,68 +433,24 @@ class DemoEventTicket {
         return `${issuerId}.${objectSuffix}`;
       }
     }
-
+    // updatedClass["eventName"]["defaultValue"] = {
+    //   language: "en-US",
+    //   value: "Party Function2",
+    // };
     // Object exists
     let updatedObject = response.data;
 
     // Update the object by adding a link
     let newLink = {
-      uri: "https://people.zoho.in/wwwcarnationitcom/zp#selfservice/user/team",
-      description: "Github Profile",
+      uri: "https://developers.google.com/wallet",
+      description: "New link description",
     };
-    // let newSeatInfo = {
-    //   seat: {
-    //     defaultValue: {
-    //       language: "en-US",
-    //       value: "45",
-    //     },
-    //   },
-    //   row: {
-    //     defaultValue: {
-    //       language: "en-US",
-    //       value: "G4",
-    //     },
-    //   },
-    //   section: {
-    //     defaultValue: {
-    //       language: "en-US",
-    //       value: "50",
-    //     },
-    //   },
-    //   gate: {
-    //     defaultValue: {
-    //       language: "en-US",
-    //       value: "A",
-    //     },
-    //   },
-    // };
     if (updatedObject["linksModuleData"] === undefined) {
       updatedObject["linksModuleData"] = {
         uris: [newLink],
       };
-      // updatedObject["seatInfo"]["seat"]["defaultValue"] = {
-      //   language: "en-US",
-      //   value: "500",
-      // };
     } else {
       updatedObject["linksModuleData"]["uris"].push(newLink);
-      updatedObject["seatInfo"]["seat"]["defaultValue"] = {
-        language: "en-US",
-        value: "28",
-      };
-      updatedObject["seatInfo"]["row"]["defaultValue"] = {
-        language: "en-US",
-        value: "J11",
-      };
-      updatedObject["seatInfo"]["section"]["defaultValue"] = {
-        language: "en-US",
-        value: "144",
-      };
-      updatedObject["seatInfo"]["gate"]["defaultValue"] = {
-        language: "en-US",
-        value: "109",
-      };
-      //  updatedObject["ticketHolderName"].push(ticketHolderName);
     }
 
     response = await this.httpClient.request({
@@ -556,8 +500,8 @@ class DemoEventTicket {
 
     // Patch the object by adding a link
     let newLink = {
-      uri: "https://github.com/ashish-monal",
-      description: "Github Profile",
+      uri: "https://developers.google.com/wallet",
+      description: "New link description",
     };
 
     let patchBody = {};
@@ -577,7 +521,7 @@ class DemoEventTicket {
       method: "PATCH",
       data: patchBody,
     });
-    console.log("Line no 536: ", existingObject["seatInfo"]);
+
     console.log("Object patch response");
     console.log(response);
 
@@ -722,7 +666,7 @@ class DemoEventTicket {
       state: "ACTIVE",
       heroImage: {
         sourceUri: {
-          uri: "https://www.carnationinfotech.com/assets/img/logo.png",
+          uri: "https://farm4.staticflickr.com/3723/11177041115_6e6a3b6f49_o.jpg",
         },
         contentDescription: {
           defaultValue: {
