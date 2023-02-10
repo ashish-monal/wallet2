@@ -1,24 +1,8 @@
-/*
- * Copyright 2022 Google Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 // [START setup]
 // [START imports]
-const { GoogleAuth } = require('google-auth-library');
-const jwt = require('jsonwebtoken');
-const { v4: uuidv4 } = require('uuid');
+const { GoogleAuth } = require("google-auth-library");
+const jwt = require("jsonwebtoken");
+const { v4: uuidv4 } = require("uuid");
 // [END imports]
 
 /**
@@ -30,10 +14,11 @@ class DemoFlight {
      * Path to service account key file from Google Cloud Console. Environment
      * variable: GOOGLE_APPLICATION_CREDENTIALS.
      */
-    this.keyFilePath = process.env.GOOGLE_APPLICATION_CREDENTIALS || '/path/to/key.json';
+    this.keyFilePath =
+      process.env.GOOGLE_APPLICATION_CREDENTIALS || "/path/to/key.json";
 
-    this.baseUrl = 'https://walletobjects.googleapis.com/walletobjects/v1';
-    this.batchUrl = 'https://walletobjects.googleapis.com/batch';
+    this.baseUrl = "https://walletobjects.googleapis.com/walletobjects/v1";
+    this.batchUrl = "https://walletobjects.googleapis.com/batch";
     this.classUrl = `${this.baseUrl}/flightClass`;
     this.objectUrl = `${this.baseUrl}/flightObject`;
 
@@ -50,7 +35,7 @@ class DemoFlight {
 
     this.httpClient = new GoogleAuth({
       credentials: this.credentials,
-      scopes: 'https://www.googleapis.com/auth/wallet_object.issuer'
+      scopes: "https://www.googleapis.com/auth/wallet_object.issuer",
     });
   }
   // [END auth]
@@ -71,7 +56,7 @@ class DemoFlight {
     try {
       response = await this.httpClient.request({
         url: `${this.classUrl}/${issuerId}.${classSuffix}`,
-        method: 'GET'
+        method: "GET",
       });
 
       console.log(`Class ${issuerId}.${classSuffix} already exists!`);
@@ -88,35 +73,35 @@ class DemoFlight {
     // See link below for more information on required properties
     // https://developers.google.com/wallet/tickets/boarding-passes/rest/v1/flightclass
     let newClass = {
-      'id': `${issuerId}.${classSuffix}`,
-      'issuerName': 'Issuer name',
-      'reviewStatus': 'UNDER_REVIEW',
-      'localScheduledDepartureDateTime': '2023-07-02T15:30:00',
-      'flightHeader': {
-        'carrier': {
-          'carrierIataCode': 'LX'
+      id: `${issuerId}.${classSuffix}`,
+      issuerName: "Spice Jet",
+      reviewStatus: "UNDER_REVIEW",
+      localScheduledDepartureDateTime: "2023-02-11T02:55:00",
+      flightHeader: {
+        carrier: {
+          carrierIataCode: "SG",
         },
-        'flightNumber': '123'
+        flightNumber: "8729",
       },
-      'origin': {
-        'airportIataCode': 'LAX',
-        'terminal': '1',
-        'gate': 'A2'
+      origin: {
+        airportIataCode: "PAT",
+        terminal: "1",
+        gate: "A1",
       },
-      'destination': {
-        'airportIataCode': 'SFO',
-        'terminal': '2',
-        'gate': 'C3'
-      }
+      destination: {
+        airportIataCode: "DEL",
+        terminal: "2",
+        gate: "A2",
+      },
     };
 
     response = await this.httpClient.request({
       url: this.classUrl,
-      method: 'POST',
-      data: newClass
+      method: "POST",
+      data: newClass,
     });
 
-    console.log('Class insert response');
+    console.log("Class insert response");
     console.log(response);
 
     return `${issuerId}.${classSuffix}`;
@@ -141,7 +126,7 @@ class DemoFlight {
     try {
       response = await this.httpClient.request({
         url: `${this.classUrl}/${issuerId}.${classSuffix}`,
-        method: 'GET'
+        method: "GET",
       });
     } catch (err) {
       if (err.response && err.response.status === 404) {
@@ -158,21 +143,31 @@ class DemoFlight {
     let updatedClass = response.data;
 
     // Update the class by adding a homepage
-    updatedClass['homepageUri'] = {
-      'uri': 'https://developers.google.com/wallet',
-      'description': 'Homepage description'
+    updatedClass["homepageUri"] = {
+      uri: "https://www.spicejet.com/",
+      description: "Spice Jet Description",
     };
 
     // Note: reviewStatus must be 'UNDER_REVIEW' or 'DRAFT' for updates
-    updatedClass['reviewStatus'] = 'UNDER_REVIEW';
+    updatedClass["reviewStatus"] = "UNDER_REVIEW";
+    //updatedClass["issuerName"] = "Go First";
+    //updatedClass["localScheduledDepartureDateTime"] = "2023-02-10T10:05:00";
+    // updatedClass["flightHeader"]["carrier"]["carrierIataCode"] = "GO";
+    //  updatedClass["flightHeader"]["flightNumber"] = "9278";
+    // updatedClass["origin"]["airportIataCode"] = "DEL";
+    updatedClass["origin"]["terminal"] = "2";
+    updatedClass["origin"]["gate"] = "A2";
+    //updatedClass["destination"]["airportIataCode"] = "PAT";
+    //updatedClass["destination"]["terminal"] = "1";
+    //updatedClass["destination"]["gate"] = "A1";
 
     response = await this.httpClient.request({
       url: `${this.classUrl}/${issuerId}.${classSuffix}`,
-      method: 'PUT',
-      data: updatedClass
+      method: "PUT",
+      data: updatedClass,
     });
 
-    console.log('Class update response');
+    console.log("Class update response");
     console.log(response);
 
     return `${issuerId}.${classSuffix}`;
@@ -197,7 +192,7 @@ class DemoFlight {
     try {
       response = await this.httpClient.request({
         url: `${this.classUrl}/${issuerId}.${classSuffix}`,
-        method: 'GET'
+        method: "GET",
       });
     } catch (err) {
       if (err.response && err.response.status === 404) {
@@ -212,22 +207,22 @@ class DemoFlight {
 
     // Patch the class by adding a homepage
     let patchBody = {
-      'homepageUri': {
-        'uri': 'https://developers.google.com/wallet',
-        'description': 'Homepage description'
+      homepageUri: {
+        uri: "https://developers.google.com/wallet",
+        description: "Homepage description",
       },
 
       // Note: reviewStatus must be 'UNDER_REVIEW' or 'DRAFT' for updates
-      'reviewStatus': 'UNDER_REVIEW'
+      reviewStatus: "UNDER_REVIEW",
     };
 
     response = await this.httpClient.request({
       url: `${this.classUrl}/${issuerId}.${classSuffix}`,
-      method: 'PATCH',
-      data: patchBody
+      method: "PATCH",
+      data: patchBody,
     });
 
-    console.log('Class patch response');
+    console.log("Class patch response");
     console.log(response);
 
     return `${issuerId}.${classSuffix}`;
@@ -252,7 +247,7 @@ class DemoFlight {
     try {
       response = await this.httpClient.request({
         url: `${this.classUrl}/${issuerId}.${classSuffix}`,
-        method: 'GET'
+        method: "GET",
       });
     } catch (err) {
       if (err.response && err.response.status === 404) {
@@ -267,16 +262,16 @@ class DemoFlight {
 
     response = await this.httpClient.request({
       url: `${this.classUrl}/${issuerId}.${classSuffix}/addMessage`,
-      method: 'POST',
+      method: "POST",
       data: {
-        'message': {
-          'header': header,
-          'body': body
-        }
-      }
+        message: {
+          header: header,
+          body: body,
+        },
+      },
     });
 
-    console.log('Class addMessage response');
+    console.log("Class addMessage response");
     console.log(response);
 
     return `${issuerId}.${classSuffix}`;
@@ -300,7 +295,7 @@ class DemoFlight {
     try {
       response = await this.httpClient.request({
         url: `${this.objectUrl}/${issuerId}.${objectSuffix}`,
-        method: 'GET'
+        method: "GET",
       });
 
       console.log(`Object ${issuerId}.${objectSuffix} already exists!`);
@@ -317,84 +312,84 @@ class DemoFlight {
     // See link below for more information on required properties
     // https://developers.google.com/wallet/tickets/boarding-passes/rest/v1/flightobject
     let newObject = {
-      'id': `${issuerId}.${objectSuffix}`,
-      'classId': `${issuerId}.${classSuffix}`,
-      'state': 'ACTIVE',
-      'heroImage': {
-        'sourceUri': {
-          'uri': 'https://farm4.staticflickr.com/3723/11177041115_6e6a3b6f49_o.jpg'
+      id: `${issuerId}.${objectSuffix}`,
+      classId: `${issuerId}.${classSuffix}`,
+      state: "ACTIVE",
+      heroImage: {
+        sourceUri: {
+          uri: "https://farm4.staticflickr.com/3723/11177041115_6e6a3b6f49_o.jpg",
         },
-        'contentDescription': {
-          'defaultValue': {
-            'language': 'en-US',
-            'value': 'Hero image description'
-          }
-        }
+        contentDescription: {
+          defaultValue: {
+            language: "en-US",
+            value: "Hero image description",
+          },
+        },
       },
-      'textModulesData': [
+      textModulesData: [
         {
-          'header': 'Text module header',
-          'body': 'Text module body',
-          'id': 'TEXT_MODULE_ID'
-        }
+          header: "Moto",
+          body: "Best & Safe AirLines ",
+          id: "101",
+        },
       ],
-      'linksModuleData': {
-        'uris': [
+      linksModuleData: {
+        uris: [
           {
-            'uri': 'http://maps.google.com/',
-            'description': 'Link module URI description',
-            'id': 'LINK_MODULE_URI_ID'
+            uri: "https://www.flygofirst.com/",
+            description: "Go First",
+            id: "LINK_MODULE_URI_ID",
           },
           {
-            'uri': 'tel:6505555555',
-            'description': 'Link module tel description',
-            'id': 'LINK_MODULE_TEL_ID'
-          }
-        ]
+            uri: "tel:6206416452",
+            description: "Contact Number",
+            id: "LINK_MODULE_TEL_ID",
+          },
+        ],
       },
-      'imageModulesData': [
+      imageModulesData: [
         {
-          'mainImage': {
-            'sourceUri': {
-              'uri': 'http://farm4.staticflickr.com/3738/12440799783_3dc3c20606_b.jpg'
+          mainImage: {
+            sourceUri: {
+              uri: "https://www.flygofirst.com/images/go-first-logo.png",
             },
-            'contentDescription': {
-              'defaultValue': {
-                'language': 'en-US',
-                'value': 'Image module description'
-              }
-            }
+            contentDescription: {
+              defaultValue: {
+                language: "en-US",
+                value: "Image module description",
+              },
+            },
           },
-          'id': 'IMAGE_MODULE_ID'
-        }
+          id: "IMAGE_MODULE_ID",
+        },
       ],
-      'barcode': {
-        'type': 'QR_CODE',
-        'value': 'QR code'
+      barcode: {
+        type: "QR_CODE",
+        value: "QR code",
       },
-      'locations': [
+      locations: [
         {
-          'latitude': 37.424015499999996,
-          'longitude': -122.09259560000001
-        }
+          latitude: 37.424015499999996,
+          longitude: -122.09259560000001,
+        },
       ],
-      'passengerName': 'Passenger name',
-      'boardingAndSeatingInfo': {
-        'boardingGroup': 'B',
-        'seatNumber': '42'
+      passengerName: "Passenger name",
+      boardingAndSeatingInfo: {
+        boardingGroup: "B",
+        seatNumber: "42",
       },
-      'reservationInfo': {
-        'confirmationCode': 'Confirmation code'
-      }
+      reservationInfo: {
+        confirmationCode: "Confirmation code",
+      },
     };
 
     response = await this.httpClient.request({
       url: this.objectUrl,
-      method: 'POST',
-      data: newObject
+      method: "POST",
+      data: newObject,
     });
 
-    console.log('Object insert response');
+    console.log("Object insert response");
     console.log(response);
 
     return `${issuerId}.${objectSuffix}`;
@@ -419,7 +414,7 @@ class DemoFlight {
     try {
       response = await this.httpClient.request({
         url: `${this.objectUrl}/${issuerId}.${objectSuffix}`,
-        method: 'GET'
+        method: "GET",
       });
     } catch (err) {
       if (err.response && err.response.status === 404) {
@@ -437,24 +432,45 @@ class DemoFlight {
 
     // Update the object by adding a link
     let newLink = {
-      'uri': 'https://developers.google.com/wallet',
-      'description': 'New link description'
-    }
-    if (updatedObject['linksModuleData'] === undefined) {
-      updatedObject['linksModuleData'] = {
-        'uris': [newLink]
+      uri: "https://developers.google.com/wallet",
+      description: "New link description",
+    };
+    let newTextModulesData = [
+      {
+        header: "Name of Flight Provider",
+        body: "Go First",
+        id: "100",
+      },
+    ];
+
+    if (updatedObject["linksModuleData"] === undefined) {
+      updatedObject["linksModuleData"] = {
+        uris: [newLink],
       };
     } else {
-      updatedObject['linksModuleData']['uris'].push(newLink);
+      updatedObject["linksModuleData"]["uris"].push(newLink);
+      updatedObject["textModulesData"].push(newTextModulesData);
+      updatedObject["heroImage"]["sourceUri"]["uri"] =
+        "https://www.flygofirst.com/images/go-first-logo.png";
+      // updatedObject["textModulesData"]["header"] = "Name of Flight Provider";
+      // updatedObject["textModulesData"]["body"] = "Go First";
+      // updatedObject["textModulesData"]["id"] = "01";
+      updatedObject["barcode"]["type"] = "CODE_39";
+      updatedObject["locations"]["latitude"] = 25.611736;
+      updatedObject["locations"]["longitude"] = 85.128964;
+      updatedObject["passengerName"] = "Ashish Ranjan";
+      updatedObject["boardingAndSeatingInfo"]["boardingGroup"] = "A";
+      updatedObject["boardingAndSeatingInfo"]["seatNumber"] = "24";
+      updatedObject["reservationInfo"]["confirmationCode"] = "UTR2589631470";
     }
 
     response = await this.httpClient.request({
       url: `${this.objectUrl}/${issuerId}.${objectSuffix}`,
-      method: 'PUT',
-      data: updatedObject
+      method: "PUT",
+      data: updatedObject,
     });
 
-    console.log('Object update response');
+    console.log("Object update response");
     console.log(response);
 
     return `${issuerId}.${objectSuffix}`;
@@ -477,7 +493,7 @@ class DemoFlight {
     try {
       response = await this.httpClient.request({
         url: `${this.objectUrl}/${issuerId}.${objectSuffix}`,
-        method: 'GET'
+        method: "GET",
       });
     } catch (err) {
       if (err.response && err.response.status === 404) {
@@ -495,29 +511,29 @@ class DemoFlight {
 
     // Patch the object by adding a link
     let newLink = {
-      'uri': 'https://developers.google.com/wallet',
-      'description': 'New link description'
+      uri: "https://developers.google.com/wallet",
+      description: "New link description",
     };
 
     let patchBody = {};
-    if (existingObject['linksModuleData'] === undefined) {
-      patchBody['linksModuleData'] = {
-        'uris': []
+    if (existingObject["linksModuleData"] === undefined) {
+      patchBody["linksModuleData"] = {
+        uris: [],
       };
     } else {
-      patchBody['linksModuleData'] = {
-        'uris': existingObject['linksModuleData']['uris']
+      patchBody["linksModuleData"] = {
+        uris: existingObject["linksModuleData"]["uris"],
       };
     }
-    patchBody['linksModuleData']['uris'].push(newLink);
+    patchBody["linksModuleData"]["uris"].push(newLink);
 
     response = await this.httpClient.request({
       url: `${this.objectUrl}/${issuerId}.${objectSuffix}`,
-      method: 'PATCH',
-      data: patchBody
+      method: "PATCH",
+      data: patchBody,
     });
 
-    console.log('Object patch response');
+    console.log("Object patch response");
     console.log(response);
 
     return `${issuerId}.${objectSuffix}`;
@@ -543,7 +559,7 @@ class DemoFlight {
     try {
       response = await this.httpClient.request({
         url: `${this.objectUrl}/${issuerId}.${objectSuffix}`,
-        method: 'GET'
+        method: "GET",
       });
     } catch (err) {
       if (err.response && err.response.status === 404) {
@@ -558,16 +574,16 @@ class DemoFlight {
 
     // Patch the object, setting the pass as expired
     let patchBody = {
-      'state': 'EXPIRED'
+      state: "EXPIRED",
     };
 
     response = await this.httpClient.request({
       url: `${this.objectUrl}/${issuerId}.${objectSuffix}`,
-      method: 'PATCH',
-      data: patchBody
+      method: "PATCH",
+      data: patchBody,
     });
 
-    console.log('Object expiration response');
+    console.log("Object expiration response");
     console.log(response);
 
     return `${issuerId}.${objectSuffix}`;
@@ -592,7 +608,7 @@ class DemoFlight {
     try {
       response = await this.httpClient.request({
         url: `${this.objectUrl}/${issuerId}.${objectSuffix}`,
-        method: 'GET'
+        method: "GET",
       });
     } catch (err) {
       if (err.response && err.response.status === 404) {
@@ -607,16 +623,16 @@ class DemoFlight {
 
     response = await this.httpClient.request({
       url: `${this.objectUrl}/${issuerId}.${objectSuffix}/addMessage`,
-      method: 'POST',
+      method: "POST",
       data: {
-        'message': {
-          'header': header,
-          'body': body
-        }
-      }
+        message: {
+          header: header,
+          body: body,
+        },
+      },
     });
 
-    console.log('Object addMessage response');
+    console.log("Object addMessage response");
     console.log(response);
 
     return `${issuerId}.${objectSuffix}`;
@@ -642,119 +658,121 @@ class DemoFlight {
     // See link below for more information on required properties
     // https://developers.google.com/wallet/tickets/boarding-passes/rest/v1/flightclass
     let newClass = {
-      'id': `${issuerId}.${classSuffix}`,
-      'issuerName': 'Issuer name',
-      'reviewStatus': 'UNDER_REVIEW',
-      'localScheduledDepartureDateTime': '2023-07-02T15:30:00',
-      'flightHeader': {
-        'carrier': {
-          'carrierIataCode': 'LX'
+      id: `${issuerId}.${classSuffix}`,
+      issuerName: "Issuer name",
+      reviewStatus: "UNDER_REVIEW",
+      localScheduledDepartureDateTime: "2023-09-02T19:00:00",
+      flightHeader: {
+        carrier: {
+          carrierIataCode: "LX",
         },
-        'flightNumber': '123'
+        flightNumber: "123",
       },
-      'origin': {
-        'airportIataCode': 'LAX',
-        'terminal': '1',
-        'gate': 'A2'
+      origin: {
+        airportIataCode: "LAX",
+        terminal: "1",
+        gate: "A2",
       },
-      'destination': {
-        'airportIataCode': 'SFO',
-        'terminal': '2',
-        'gate': 'C3'
-      }
+      destination: {
+        airportIataCode: "SFO",
+        terminal: "2",
+        gate: "C3",
+      },
     };
 
     // See link below for more information on required properties
     // https://developers.google.com/wallet/tickets/boarding-passes/rest/v1/flightobject
     let newObject = {
-      'id': `${issuerId}.${objectSuffix}`,
-      'classId': `${issuerId}.${classSuffix}`,
-      'state': 'ACTIVE',
-      'heroImage': {
-        'sourceUri': {
-          'uri': 'https://farm4.staticflickr.com/3723/11177041115_6e6a3b6f49_o.jpg'
+      id: `${issuerId}.${objectSuffix}`,
+      classId: `${issuerId}.${classSuffix}`,
+      state: "ACTIVE",
+      heroImage: {
+        sourceUri: {
+          uri: "https://farm4.staticflickr.com/3723/11177041115_6e6a3b6f49_o.jpg",
         },
-        'contentDescription': {
-          'defaultValue': {
-            'language': 'en-US',
-            'value': 'Hero image description'
-          }
-        }
+        contentDescription: {
+          defaultValue: {
+            language: "en-US",
+            value: "Hero image description",
+          },
+        },
       },
-      'textModulesData': [
+      textModulesData: [
         {
-          'header': 'Text module header',
-          'body': 'Text module body',
-          'id': 'TEXT_MODULE_ID'
-        }
+          header: "Text module header",
+          body: "Text module body",
+          id: "TEXT_MODULE_ID",
+        },
       ],
-      'linksModuleData': {
-        'uris': [
+      linksModuleData: {
+        uris: [
           {
-            'uri': 'http://maps.google.com/',
-            'description': 'Link module URI description',
-            'id': 'LINK_MODULE_URI_ID'
+            uri: "http://maps.google.com/",
+            description: "Link module URI description",
+            id: "LINK_MODULE_URI_ID",
           },
           {
-            'uri': 'tel:6505555555',
-            'description': 'Link module tel description',
-            'id': 'LINK_MODULE_TEL_ID'
-          }
-        ]
+            uri: "tel:6505555555",
+            description: "Link module tel description",
+            id: "LINK_MODULE_TEL_ID",
+          },
+        ],
       },
-      'imageModulesData': [
+      imageModulesData: [
         {
-          'mainImage': {
-            'sourceUri': {
-              'uri': 'http://farm4.staticflickr.com/3738/12440799783_3dc3c20606_b.jpg'
+          mainImage: {
+            sourceUri: {
+              uri: "http://farm4.staticflickr.com/3738/12440799783_3dc3c20606_b.jpg",
             },
-            'contentDescription': {
-              'defaultValue': {
-                'language': 'en-US',
-                'value': 'Image module description'
-              }
-            }
+            contentDescription: {
+              defaultValue: {
+                language: "en-US",
+                value: "Image module description",
+              },
+            },
           },
-          'id': 'IMAGE_MODULE_ID'
-        }
+          id: "IMAGE_MODULE_ID",
+        },
       ],
-      'barcode': {
-        'type': 'QR_CODE',
-        'value': 'QR code'
+      barcode: {
+        type: "QR_CODE",
+        value: "QR code",
       },
-      'locations': [
+      locations: [
         {
-          'latitude': 37.424015499999996,
-          'longitude': -122.09259560000001
-        }
+          latitude: 37.424015499999996,
+          longitude: -122.09259560000001,
+        },
       ],
-      'passengerName': 'Passenger name',
-      'boardingAndSeatingInfo': {
-        'boardingGroup': 'B',
-        'seatNumber': '42'
+      passengerName: "Passenger name",
+      boardingAndSeatingInfo: {
+        boardingGroup: "B",
+        seatNumber: "42",
       },
-      'reservationInfo': {
-        'confirmationCode': 'Confirmation code'
-      }
+      reservationInfo: {
+        confirmationCode: "Confirmation code",
+      },
     };
 
     // Create the JWT claims
     let claims = {
       iss: this.credentials.client_email,
-      aud: 'google',
-      origins: ['www.example.com'],
-      typ: 'savetowallet',
+      aud: "google",
+      origins: ["www.example.com"],
+      typ: "savetowallet",
       payload: {
         // The listed classes and objects will be created
         flightClasses: [newClass],
-        flightObjects: [newObject]
-      }
+        flightObjects: [newObject],
+      },
     };
 
     // The service account credentials are used to sign the JWT
-    let token = jwt.sign(claims, this.credentials.private_key, { algorithm: 'RS256' });
+    let token = jwt.sign(claims, this.credentials.private_key, {
+      algorithm: "RS256",
+    });
 
-    console.log('Add to Google Wallet link');
+    console.log("Add to Google Wallet link");
     console.log(`https://pay.google.com/gp/v/save/${token}`);
 
     return `https://pay.google.com/gp/v/save/${token}`;
@@ -787,61 +805,77 @@ class DemoFlight {
     // Note: Make sure to replace the placeholder class and object suffixes
     let objectsToAdd = {
       // Event tickets
-      'eventTicketObjects': [{
-        'id': `${issuerId}.EVENT_OBJECT_SUFFIX`,
-        'classId': `${issuerId}.EVENT_CLASS_SUFFIX`
-      }],
+      eventTicketObjects: [
+        {
+          id: `${issuerId}.EVENT_OBJECT_SUFFIX`,
+          classId: `${issuerId}.EVENT_CLASS_SUFFIX`,
+        },
+      ],
 
       // Boarding passes
-      'flightObjects': [{
-        'id': `${issuerId}.FLIGHT_OBJECT_SUFFIX`,
-        'classId': `${issuerId}.FLIGHT_CLASS_SUFFIX`
-      }],
+      flightObjects: [
+        {
+          id: `${issuerId}.FLIGHT_OBJECT_SUFFIX`,
+          classId: `${issuerId}.FLIGHT_CLASS_SUFFIX`,
+        },
+      ],
 
       // Generic passes
-      'genericObjects': [{
-        'id': `${issuerId}.GENERIC_OBJECT_SUFFIX`,
-        'classId': `${issuerId}.GENERIC_CLASS_SUFFIX`
-      }],
+      genericObjects: [
+        {
+          id: `${issuerId}.GENERIC_OBJECT_SUFFIX`,
+          classId: `${issuerId}.GENERIC_CLASS_SUFFIX`,
+        },
+      ],
 
       // Gift cards
-      'giftCardObjects': [{
-        'id': `${issuerId}.GIFT_CARD_OBJECT_SUFFIX`,
-        'classId': `${issuerId}.GIFT_CARD_CLASS_SUFFIX`
-      }],
+      giftCardObjects: [
+        {
+          id: `${issuerId}.GIFT_CARD_OBJECT_SUFFIX`,
+          classId: `${issuerId}.GIFT_CARD_CLASS_SUFFIX`,
+        },
+      ],
 
       // Loyalty cards
-      'loyaltyObjects': [{
-        'id': `${issuerId}.LOYALTY_OBJECT_SUFFIX`,
-        'classId': `${issuerId}.LOYALTY_CLASS_SUFFIX`
-      }],
+      loyaltyObjects: [
+        {
+          id: `${issuerId}.LOYALTY_OBJECT_SUFFIX`,
+          classId: `${issuerId}.LOYALTY_CLASS_SUFFIX`,
+        },
+      ],
 
       // Offers
-      'offerObjects': [{
-        'id': `${issuerId}.OFFER_OBJECT_SUFFIX`,
-        'classId': `${issuerId}.OFFER_CLASS_SUFFIX`
-      }],
+      offerObjects: [
+        {
+          id: `${issuerId}.OFFER_OBJECT_SUFFIX`,
+          classId: `${issuerId}.OFFER_CLASS_SUFFIX`,
+        },
+      ],
 
       // Transit passes
-      'transitObjects': [{
-        'id': `${issuerId}.TRANSIT_OBJECT_SUFFIX`,
-        'classId': `${issuerId}.TRANSIT_CLASS_SUFFIX`
-      }]
-    }
+      transitObjects: [
+        {
+          id: `${issuerId}.TRANSIT_OBJECT_SUFFIX`,
+          classId: `${issuerId}.TRANSIT_CLASS_SUFFIX`,
+        },
+      ],
+    };
 
     // Create the JWT claims
     let claims = {
       iss: this.credentials.client_email,
-      aud: 'google',
-      origins: ['www.example.com'],
-      typ: 'savetowallet',
-      payload: objectsToAdd
+      aud: "google",
+      origins: ["www.example.com"],
+      typ: "savetowallet",
+      payload: objectsToAdd,
     };
 
     // The service account credentials are used to sign the JWT
-    let token = jwt.sign(claims, this.credentials.private_key, { algorithm: 'RS256' });
+    let token = jwt.sign(claims, this.credentials.private_key, {
+      algorithm: "RS256",
+    });
 
-    console.log('Add to Google Wallet link');
+    console.log("Add to Google Wallet link");
     console.log(`https://pay.google.com/gp/v/save/${token}`);
 
     return `https://pay.google.com/gp/v/save/${token}`;
@@ -858,109 +892,109 @@ class DemoFlight {
   async batchCreateObjects(issuerId, classSuffix) {
     // See below for more information
     // https://cloud.google.com/compute/docs/api/how-tos/batch#example
-    let data = '';
+    let data = "";
     let batchObject;
     let objectSuffix;
 
     // Example: Generate three new pass objects
     for (let i = 0; i < 3; i++) {
       // Generate a random object suffix
-      objectSuffix = uuidv4().replace('[^\w.-]', '_');
+      objectSuffix = uuidv4().replace("[^w.-]", "_");
 
       // See link below for more information on required properties
       // https://developers.google.com/wallet/tickets/boarding-passes/rest/v1/flightobject
       batchObject = {
-        'id': `${issuerId}.${objectSuffix}`,
-        'classId': `${issuerId}.${classSuffix}`,
-        'state': 'ACTIVE',
-        'heroImage': {
-          'sourceUri': {
-            'uri': 'https://farm4.staticflickr.com/3723/11177041115_6e6a3b6f49_o.jpg'
+        id: `${issuerId}.${objectSuffix}`,
+        classId: `${issuerId}.${classSuffix}`,
+        state: "ACTIVE",
+        heroImage: {
+          sourceUri: {
+            uri: "https://farm4.staticflickr.com/3723/11177041115_6e6a3b6f49_o.jpg",
           },
-          'contentDescription': {
-            'defaultValue': {
-              'language': 'en-US',
-              'value': 'Hero image description'
-            }
-          }
+          contentDescription: {
+            defaultValue: {
+              language: "en-US",
+              value: "Hero image description",
+            },
+          },
         },
-        'textModulesData': [
+        textModulesData: [
           {
-            'header': 'Text module header',
-            'body': 'Text module body',
-            'id': 'TEXT_MODULE_ID'
-          }
+            header: "Text module header",
+            body: "Text module body",
+            id: "TEXT_MODULE_ID",
+          },
         ],
-        'linksModuleData': {
-          'uris': [
+        linksModuleData: {
+          uris: [
             {
-              'uri': 'http://maps.google.com/',
-              'description': 'Link module URI description',
-              'id': 'LINK_MODULE_URI_ID'
+              uri: "http://maps.google.com/",
+              description: "Link module URI description",
+              id: "LINK_MODULE_URI_ID",
             },
             {
-              'uri': 'tel:6505555555',
-              'description': 'Link module tel description',
-              'id': 'LINK_MODULE_TEL_ID'
-            }
-          ]
+              uri: "tel:6505555555",
+              description: "Link module tel description",
+              id: "LINK_MODULE_TEL_ID",
+            },
+          ],
         },
-        'imageModulesData': [
+        imageModulesData: [
           {
-            'mainImage': {
-              'sourceUri': {
-                'uri': 'http://farm4.staticflickr.com/3738/12440799783_3dc3c20606_b.jpg'
+            mainImage: {
+              sourceUri: {
+                uri: "http://farm4.staticflickr.com/3738/12440799783_3dc3c20606_b.jpg",
               },
-              'contentDescription': {
-                'defaultValue': {
-                  'language': 'en-US',
-                  'value': 'Image module description'
-                }
-              }
+              contentDescription: {
+                defaultValue: {
+                  language: "en-US",
+                  value: "Image module description",
+                },
+              },
             },
-            'id': 'IMAGE_MODULE_ID'
-          }
+            id: "IMAGE_MODULE_ID",
+          },
         ],
-        'barcode': {
-          'type': 'QR_CODE',
-          'value': 'QR code'
+        barcode: {
+          type: "QR_CODE",
+          value: "QR code",
         },
-        'locations': [
+        locations: [
           {
-            'latitude': 37.424015499999996,
-            'longitude': -122.09259560000001
-          }
+            latitude: 37.424015499999996,
+            longitude: -122.09259560000001,
+          },
         ],
-        'passengerName': 'Passenger name',
-        'boardingAndSeatingInfo': {
-          'boardingGroup': 'B',
-          'seatNumber': '42'
+        passengerName: "Passenger name",
+        boardingAndSeatingInfo: {
+          boardingGroup: "B",
+          seatNumber: "42",
         },
-        'reservationInfo': {
-          'confirmationCode': 'Confirmation code'
-        }
+        reservationInfo: {
+          confirmationCode: "Confirmation code",
+        },
       };
 
-      data += '--batch_createobjectbatch\n';
-      data += 'Content-Type: application/json\n\n';
-      data += 'POST /walletobjects/v1/flightObject\n\n';
+      data += "--batch_createobjectbatch\n";
+      data += "Content-Type: application/json\n\n";
+      data += "POST /walletobjects/v1/flightObject\n\n";
 
-      data += JSON.stringify(batchObject) + '\n\n';
+      data += JSON.stringify(batchObject) + "\n\n";
     }
-    data += '--batch_createobjectbatch--';
+    data += "--batch_createobjectbatch--";
 
     // Invoke the batch API calls
     let response = await this.httpClient.request({
       url: this.batchUrl,
-      method: 'POST',
+      method: "POST",
       data: data,
       headers: {
         // `boundary` is the delimiter between API calls in the batch request
-        'Content-Type': 'multipart/mixed; boundary=batch_createobjectbatch'
-      }
+        "Content-Type": "multipart/mixed; boundary=batch_createobjectbatch",
+      },
     });
 
-    console.log('Batch insert response');
+    console.log("Batch insert response");
     console.log(response);
   }
   // [END batch]

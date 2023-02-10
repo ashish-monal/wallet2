@@ -141,10 +141,10 @@ class DemoEventTicket {
     // Note: reviewStatus must be 'UNDER_REVIEW' or 'DRAFT' for updates
     updatedClass["eventName"]["defaultValue"] = {
       language: "en-US",
-      value: "Party Function2",
+      value: "Party",
     };
     updatedClass["reviewStatus"] = "UNDER_REVIEW";
-    updatedClass["issuerName"] = "Carnation InfoTech 2";
+    updatedClass["issuerName"] = "Carnation InfoTech3";
 
     response = await this.httpClient.request({
       url: `${this.classUrl}/${issuerId}.${classSuffix}`,
@@ -492,19 +492,19 @@ class DemoEventTicket {
       updatedObject["linksModuleData"]["uris"].push(newLink);
       updatedObject["seatInfo"]["seat"]["defaultValue"] = {
         language: "en-US",
-        value: "28",
+        value: "30",
       };
       updatedObject["seatInfo"]["row"]["defaultValue"] = {
         language: "en-US",
-        value: "J11",
+        value: "M14",
       };
       updatedObject["seatInfo"]["section"]["defaultValue"] = {
         language: "en-US",
-        value: "144",
+        value: "140",
       };
       updatedObject["seatInfo"]["gate"]["defaultValue"] = {
         language: "en-US",
-        value: "109",
+        value: "09",
       };
       //  updatedObject["ticketHolderName"].push(ticketHolderName);
     }
